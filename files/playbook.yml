@@ -1,0 +1,27 @@
+- name: Connect to localhost
+  hosts: 127.0.0.1
+  connection: local
+
+  tasks:
+    - name: install packages
+      apt: name={{item}} state=present update_cache=yes
+      with_items:
+        - docker.io
+        - python-pip
+
+    - name: Install docker-py
+      pip:
+        name: docker-py
+
+    - name: Log into DockerHub
+      docker_login:
+        username: username
+        password: 'password'
+        email: email
+
+    - name: Build an image and push it to docker hub
+      docker_image:
+        path: .
+        name: username/repo:deploy
+        tag: v1
+        push: yes
